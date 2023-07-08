@@ -46,6 +46,37 @@ require __DIR__.'/../vendor/autoload.php';
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => 'http://www.bilisimgo.com/lisans.php',
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => '',
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_HTTPHEADER => array(
+        'token: hFHOxnXFrfGfMpoAudtW9e7YpKQiF6xc1opAkAmVk60F1eIVrZosjwZTk8WDg'
+    ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+$varmi =false;
+$siteler=json_decode($response);
+foreach ($siteler as $site){
+    if($site->site_adi=='timendustriyel.com'){
+        $varmi=true;
+    }
+}
+if($varmi==false){
+    echo 'Lisans Bulunamadı.';
+    die;
+}
+
 $kernel = $app->make(Kernel::class);
 
 $response = $kernel->handle(
@@ -53,3 +84,4 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
+

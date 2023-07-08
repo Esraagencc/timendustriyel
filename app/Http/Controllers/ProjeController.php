@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\categorys;
 use App\Models\products;
+use App\Models\files;
 use Illuminate\Http\Request;
 
 class ProjeController extends Controller
@@ -29,8 +30,10 @@ class ProjeController extends Controller
     }
     public function products(){
         $products=products::all();
+        $categorys=categorys::all();
         return view('products',[
-            "products"=> $products
+            "products"=> $products,
+            "categorys"=>$categorys
         ]);
     }
     public function productadd(){
@@ -65,6 +68,17 @@ class ProjeController extends Controller
             "cat_id"=> $request->get('cat_name'),
             "description"=> $request->get('description')
         ]);
+        if ($request->hasFile('files')){
+            foreach($request->file('files') as $key => $file)
+            {
+                $fileName = time().rand(1,99).'.'.$file->extension();
+                $file->move(public_path('uploads'), $fileName);
+                files::create([
+                    'product_id' => $product->id,
+                    'file_url' => $fileName,
+                ]);
+            }
+        }
         return redirect()->route('admin.products')->with(['message'=> "Başarıyla eklendi"]);
     }
     public function categoryUpdatePost($id, Request $request){
@@ -97,5 +111,13 @@ class ProjeController extends Controller
         $delete=products::where('id',$id)->delete();
         return redirect()->route('admin.products')->with(['message'=> "Başarıyla silindi."]);
     }
+    public function productapi(){
+        return products::query()->get();
+    }
+    public function categoryapi(Request $request){
+
+        return categorys::query()->get();
+    }
+
 
 }

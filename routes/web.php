@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjeController;
+use App\Http\Controllers\WebController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,9 @@ Route::prefix('/admin')->name('admin.')->group(function () {
     Route::get('/product-delete/{id}', [ProjeController::class, 'productDeletePost'])->name('productDeletePost');
 
 });
+Route::get('/homee', [WebController::class, 'home'])->name('home');
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
